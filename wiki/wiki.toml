@@ -1,0 +1,8 @@
+wikiPackageName = "koala-wiki"
+
+wikiOutDir = ""
+
+[pages]
+    [pages.in_v1_5_storage]
+    apifiles = []
+    funcnames = []
