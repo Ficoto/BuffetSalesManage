@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 	"BuffetSalesManage/BuffetSalesManage.git/src"
+	"BuffetSalesManage/BuffetSalesManage.git/model/mongo"
 )
 
 func main() {
@@ -16,12 +17,9 @@ func main() {
 	log.SetOutput(os.Stdout)
 	log.SetLevel(log.DebugLevel)
 
-	// 初始化配置信息
-	//base.InitialConfigParam()
-
 	// 初始化mongo连接
-	//mongo.Connect()
-	//defer mongo.CloseSession()
+	mongo.Connect()
+	defer mongo.CloseSession()
 
 	//初始化Index
 	//mongo.InitializeIndex()

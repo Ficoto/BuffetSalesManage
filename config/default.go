@@ -2,13 +2,11 @@ package config
 
 import (
 	"gitlab.xinghuolive.com/Backend-Go/camel/db"
-	"gitlab.xinghuolive.com/Backend-Go/camel/spark"
 )
 
 // base namespace
 var (
 	ProjectName = "buffet"
-	Env         = spark.LoadEnv()
 	Schema      = ProjectName
 	EnvPrefix   = DevPrefix
 	DevPrefix   = "dev"
@@ -18,6 +16,4 @@ var (
 
 	MongoDBName   = ProjectName
 	MongoConnConf = db.LoadMongoConf()
-
-
 )
