@@ -8,9 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"gitlab.xinghuolive.com/Backend-Go/orca/base"
-	"gitlab.xinghuolive.com/Backend-Go/orca/model/mongo"
-	"gitlab.xinghuolive.com/Backend-Go/orca/src"
+	"BuffetSalesManage/BuffetSalesManage.git/src"
 )
 
 func main() {
@@ -19,17 +17,17 @@ func main() {
 	log.SetLevel(log.DebugLevel)
 
 	// 初始化配置信息
-	base.InitialConfigParam()
+	//base.InitialConfigParam()
 
 	// 初始化mongo连接
-	mongo.Connect()
-	defer mongo.CloseSession()
+	//mongo.Connect()
+	//defer mongo.CloseSession()
 
 	//初始化Index
-	mongo.InitializeIndex()
+	//mongo.InitializeIndex()
 
 	// 初始化路由
-	src.OrcaRouter.Initialization()
+	src.BuffetSalesRouter.Initialization()
 	//log.Fatal(
 	//	graceful.RunWithErr(
 	//		router.FlagHostPort(13003), 120*time.Second, handlers.LoggingHandler(os.Stdout, src.KangarooRouter.R),
@@ -38,11 +36,11 @@ func main() {
 
 	s := &http.Server{
 		Addr:    ":13011",
-		Handler: handlers.LoggingHandler(os.Stdout, src.OrcaRouter.R),
+		Handler: handlers.LoggingHandler(os.Stdout, src.BuffetSalesRouter.R),
 	}
 
 	go func() {
-		log.Println("server orca start...")
+		log.Println("server BuffetSales start...")
 		log.Fatal(s.ListenAndServe())
 	}()
 

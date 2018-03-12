@@ -4,7 +4,7 @@ import (
 	"log"
 	"sync"
 	"gopkg.in/mgo.v2"
-	"gitlab.xinghuolive.com/Backend-Go/orca/config"
+	"BuffetSalesManage/BuffetSalesManage.git/config"
 )
 
 var (

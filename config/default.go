@@ -7,14 +7,11 @@ import (
 
 // base namespace
 var (
-	ProjectName = "orca"
+	ProjectName = "buffet"
 	Env         = spark.LoadEnv()
 	Schema      = ProjectName
 	EnvPrefix   = DevPrefix
 	DevPrefix   = "dev"
-	TestPrefix  = "test"
-	PrePrefix   = "pre"
-	ProdPrefix  = "prod"
 
 	RedisDBName   = 0
 	RedisConnConf = db.LoadRedisConf()
@@ -23,12 +20,4 @@ var (
 	MongoConnConf = db.LoadMongoConf()
 
 
-)
-
-const (
-	DefaultNotLimitSize = 0
-	MaxImageDefaultSize = DefaultNotLimitSize
-	MaxAudioDefaultSize = DefaultNotLimitSize
-	MaxVideoDefaultSize = DefaultNotLimitSize
-	MaxOtherDefaultSize = DefaultNotLimitSize
 )

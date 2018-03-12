@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/garyburd/redigo/redis"
-	"gitlab.xinghuolive.com/Backend-Go/orca/config"
+	"BuffetSalesManage/BuffetSalesManage.git/config"
 )
 
 // RedisSentinelOps - sentinel connect info

@@ -5,7 +5,7 @@ import (
 	"os/signal"
 
 	"github.com/Sirupsen/logrus"
-	"gitlab.xinghuolive.com/Backend-Go/orca/model/mongo"
+	"BuffetSalesManage/BuffetSalesManage.git/model/mongo"
 )
 
 func main() {

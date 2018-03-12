@@ -2,13 +2,14 @@ package src
 
 import (
 	"github.com/gorilla/mux"
-	"gitlab.xinghuolive.com/Backend-Go/orca/router"
+	"BuffetSalesManage/BuffetSalesManage.git/src/api/account"
+	"BuffetSalesManage/BuffetSalesManage.git/router"
 )
 
 // KangarooRouter -
-var OrcaRouter = router.BaseRouter{
+var BuffetSalesRouter = router.BaseRouter{
 	R: mux.NewRouter(),
 	ModuleRouters: []router.ModuleRouter{
-
+		account.ExRouter,
 	},
 }
