@@ -11,7 +11,7 @@ func LoadConfUtil(fileName string) *viper.Viper {
 	viper.SetConfigType("toml")
 	path := BuffetPath
 	if len(path) <= 0 {
-		log.Fatalln("spark_path is not set")
+		log.Fatalln("buffet_path is not set")
 	}
 
 	filePath := filepath.Join(path, fileName)
