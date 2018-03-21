@@ -21,8 +21,8 @@ func main() {
 	mongo.Connect()
 	defer mongo.CloseSession()
 
-	//初始化Index
-	//mongo.InitializeIndex()
+	// 初始化Index
+	mongo.InitializeIndex()
 
 	// 初始化路由
 	src.BuffetSalesRouter.Initialization()

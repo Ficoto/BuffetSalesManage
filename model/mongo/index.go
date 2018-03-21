@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 	"gopkg.in/mgo.v2"
+	"BuffetSalesManage/BuffetSalesManage.git/model/businesses.account.model"
 )
 
 type indexFunc func(session *mgo.Session) (*mgo.Collection, error)
@@ -29,6 +30,8 @@ func InitializeIndex() {
 	defer session.Close()
 
 	startTime := time.Now()
+
+	createIndex(session, businesses_account_model.Index)
 
 	elapsed := time.Since(startTime)
 	fmt.Printf("-----Create index elapsed: %s\r\n", elapsed)
