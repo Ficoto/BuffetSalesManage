@@ -19,6 +19,7 @@ const (
 	Password
 	NameOfShop
 	Location
+	Street
 )
 
 func (key BusinessesAccountKey) String() string {
@@ -33,6 +34,8 @@ func (key BusinessesAccountKey) String() string {
 		return "name_of_shop"
 	case Location:
 		return "location"
+	case Street:
+		return "street"
 	default:
 		return ""
 	}
@@ -44,6 +47,7 @@ type BusinessesAccount struct {
 	Password    string        `bson:"password"`
 	NameOfShop  string        `bson:"name_of_shop"`
 	Location    string        `json:"location"`
+	Street      string        `bson:"street"`
 }
 
 func Index(session *mgo.Session) (*mgo.Collection, error) {

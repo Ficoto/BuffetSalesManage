@@ -2,8 +2,8 @@ package ec
 
 // 模块接口基础错误码
 const (
-	InitCode      int = 10000
-	ErrorInitCode int = iota * InitCode
+	InitCode         int = 10000
+	ErrorInitCode    int = iota * InitCode
 	ErrorSysCode
 	ErrorVideoCode
 	ErrorImageCode
@@ -35,4 +35,6 @@ var (
 	VideoNotTranscoded = ErrorCode{Err: ErrorStorageCode + 3, Msg: "video not transcode."}
 	BucketInvalid      = ErrorCode{Err: ErrorStorageCode + 4, Msg: "bucket invalid."}
 	ObjectInvalidSize  = ErrorCode{Err: ErrorStorageCode + 6, Msg: "oss object invalid size."}
+
+	AccountIsExists = ErrorCode{Err: 10001, Msg: "this account name is exists!"}
 )
