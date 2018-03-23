@@ -1,4 +1,4 @@
-package account
+package businesses_account
 
 import (
 	"BuffetSalesManage/BuffetSalesManage.git/router"
@@ -25,6 +25,12 @@ var ExRouter = router.ModuleRouter{
 			Methods:     []string{http.MethodPost},
 			Pattern:     "/info/complement",
 			HandlerFunc: EditStoreInfo,
+		},
+		{
+			Name:        "Login",
+			Methods:     []string{http.MethodPost},
+			Pattern:     "/login",
+			HandlerFunc: Login,
 		},
 	},
 }
@@ -96,6 +102,34 @@ func EditStoreInfo(w http.ResponseWriter, r *http.Request) {
 	err = businesses_account_logic.ComplementInfo(session, businessesInfo)
 	if err != nil {
 		router.JSONResp(w, http.StatusBadRequest, ec.MongodbOp)
+		return
+	}
+	router.JSONResp(w, http.StatusOK, nil)
+}
+
+func Login(w http.ResponseWriter, r *http.Request) {
+	var requestBody struct {
+		AccountName string `json:"account_name"`
+		Password    string `json:"password"`
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		router.JSONResp(w, http.StatusBadRequest, ec.InvalidArgument)
+		return
+	}
+	err = json.Unmarshal(body, &requestBody)
+	if err != nil {
+		router.JSONResp(w, http.StatusBadRequest, ec.InvalidArgument)
+		return
+	}
+
+	session := mongo.CopySession()
+	defer session.Close()
+
+	isLogin := businesses_account_logic.IsLogin(session, requestBody.AccountName, requestBody.Password)
+	if !isLogin {
+		router.JSONResp(w, http.StatusBadRequest, nil)
 		return
 	}
 	router.JSONResp(w, http.StatusOK, nil)
