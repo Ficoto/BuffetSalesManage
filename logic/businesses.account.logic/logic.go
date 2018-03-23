@@ -19,7 +19,7 @@ func IsExists(session *mgo.Session, accountName string) bool {
 func RegisterBusinesses(session *mgo.Session, accountName, password string) error {
 	coll := session.DB(config.MongoDBName).C(businesses_account_model.COLL_BUSINESSES_ACCOUNT)
 	selector := bson.M{businesses_account_model.AccountName.String(): accountName}
-	update := bson.M{businesses_account_model.Password.String(): password}
+	update := bson.M{"$set": bson.M{businesses_account_model.Password.String(): password}}
 	_, err := coll.Upsert(selector, update)
 	return err
 }

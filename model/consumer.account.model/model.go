@@ -3,7 +3,7 @@ package consumer_account_model
 import (
 	"gopkg.in/mgo.v2/bson"
 	"gopkg.in/mgo.v2"
-	"BuffetSalesManage/BuffetSalesManage.git/config"
+	"BuffetSalesManage/BuffetSalesManage/config"
 	"log"
 )
 

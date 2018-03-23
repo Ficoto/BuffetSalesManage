@@ -1,14 +1,14 @@
 package consumer_account
 
 import (
-	"BuffetSalesManage/BuffetSalesManage.git/router"
+	"BuffetSalesManage/BuffetSalesManage/router"
 	"net/http"
 	"encoding/json"
 	"io/ioutil"
-	"BuffetSalesManage/BuffetSalesManage.git/base/error.code"
-	"BuffetSalesManage/BuffetSalesManage.git/model/mongo"
-	"BuffetSalesManage/BuffetSalesManage.git/model/consumer.account.model"
-	"BuffetSalesManage/BuffetSalesManage.git/logic/consumer.account.logic"
+	"BuffetSalesManage/BuffetSalesManage/base/error.code"
+	"BuffetSalesManage/BuffetSalesManage/model/mongo"
+	"BuffetSalesManage/BuffetSalesManage/model/consumer.account.model"
+	"BuffetSalesManage/BuffetSalesManage/logic/consumer.account.logic"
 )
 
 var ExRouter = router.ModuleRouter{

@@ -2,9 +2,9 @@ package consumer_account_logic
 
 import (
 	"gopkg.in/mgo.v2"
-	"BuffetSalesManage/BuffetSalesManage.git/config"
+	"BuffetSalesManage/BuffetSalesManage/config"
 	"gopkg.in/mgo.v2/bson"
-	"BuffetSalesManage/BuffetSalesManage.git/model/consumer.account.model"
+	"BuffetSalesManage/BuffetSalesManage/model/consumer.account.model"
 )
 
 func IsExists(session *mgo.Session, accountName string) bool {
@@ -19,7 +19,7 @@ func IsExists(session *mgo.Session, accountName string) bool {
 func RegisterBusinesses(session *mgo.Session, accountName, password string) error {
 	coll := session.DB(config.MongoDBName).C(consumer_account_model.COLL_CONSUMER_ACCOUNT)
 	selector := bson.M{consumer_account_model.AccountName.String(): accountName}
-	update := bson.M{consumer_account_model.Password.String(): password}
+	update := bson.M{"$set": bson.M{consumer_account_model.Password.String(): password}}
 	_, err := coll.Upsert(selector, update)
 	return err
 }
