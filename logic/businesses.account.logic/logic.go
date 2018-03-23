@@ -10,7 +10,7 @@ import (
 func IsExists(session *mgo.Session, accountName string) bool {
 	coll := session.DB(config.MongoDBName).C(businesses_account_model.COLL_BUSINESSES_ACCOUNT)
 	count, _ := coll.Find(bson.M{businesses_account_model.AccountName.String(): accountName}).Count()
-	if count != 0 {
+	if count == 0 {
 		return false
 	}
 	return true
