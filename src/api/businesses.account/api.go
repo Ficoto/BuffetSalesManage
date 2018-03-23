@@ -1,14 +1,14 @@
 package businesses_account
 
 import (
-	"BuffetSalesManage/BuffetSalesManage.git/router"
+	"BuffetSalesManage/BuffetSalesManage/router"
 	"net/http"
 	"encoding/json"
 	"io/ioutil"
-	"BuffetSalesManage/BuffetSalesManage.git/base/error.code"
-	"BuffetSalesManage/BuffetSalesManage.git/model/mongo"
-	"BuffetSalesManage/BuffetSalesManage.git/logic/businesses.account.logic"
-	"BuffetSalesManage/BuffetSalesManage.git/model/businesses.account.model"
+	"BuffetSalesManage/BuffetSalesManage/base/error.code"
+	"BuffetSalesManage/BuffetSalesManage/model/mongo"
+	"BuffetSalesManage/BuffetSalesManage/logic/businesses.account.logic"
+	"BuffetSalesManage/BuffetSalesManage/model/businesses.account.model"
 )
 
 var ExRouter = router.ModuleRouter{

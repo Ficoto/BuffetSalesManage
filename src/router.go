@@ -2,8 +2,8 @@ package src
 
 import (
 	"github.com/gorilla/mux"
-	"BuffetSalesManage/BuffetSalesManage.git/router"
-	"BuffetSalesManage/BuffetSalesManage.git/src/api/businesses.account"
+	"BuffetSalesManage/BuffetSalesManage/router"
+	"BuffetSalesManage/BuffetSalesManage/src/api/businesses.account"
 )
 
 // KangarooRouter -

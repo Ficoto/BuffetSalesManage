@@ -8,8 +8,8 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"BuffetSalesManage/BuffetSalesManage.git/src"
-	"BuffetSalesManage/BuffetSalesManage.git/model/mongo"
+	"BuffetSalesManage/BuffetSalesManage/src"
+	"BuffetSalesManage/BuffetSalesManage/model/mongo"
 )
 
 func main() {

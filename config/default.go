@@ -1,7 +1,7 @@
 package config
 
 import (
-	"BuffetSalesManage/BuffetSalesManage.git/utils"
+	"BuffetSalesManage/BuffetSalesManage/utils"
 )
 
 // base namespace

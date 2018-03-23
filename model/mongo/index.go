@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 	"gopkg.in/mgo.v2"
-	"BuffetSalesManage/BuffetSalesManage.git/model/businesses.account.model"
+	"BuffetSalesManage/BuffetSalesManage/model/businesses.account.model"
 )
 
 type indexFunc func(session *mgo.Session) (*mgo.Collection, error)

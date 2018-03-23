@@ -2,8 +2,8 @@ package businesses_account_logic
 
 import (
 	"gopkg.in/mgo.v2"
-	"BuffetSalesManage/BuffetSalesManage.git/config"
-	"BuffetSalesManage/BuffetSalesManage.git/model/businesses.account.model"
+	"BuffetSalesManage/BuffetSalesManage/config"
+	"BuffetSalesManage/BuffetSalesManage/model/businesses.account.model"
 	"gopkg.in/mgo.v2/bson"
 )
 

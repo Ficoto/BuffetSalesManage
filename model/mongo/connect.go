@@ -4,7 +4,7 @@ import (
 	"log"
 	"sync"
 	"gopkg.in/mgo.v2"
-	"BuffetSalesManage/BuffetSalesManage.git/config"
+	"BuffetSalesManage/BuffetSalesManage/config"
 )
 
 var (
