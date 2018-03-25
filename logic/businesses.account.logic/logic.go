@@ -7,27 +7,27 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-func IsExists(session *mgo.Session, accountName string) bool {
+func IsExists(session *mgo.Session, phone string) bool {
 	coll := session.DB(config.MongoDBName).C(businesses_account_model.COLL_BUSINESSES_ACCOUNT)
-	count, _ := coll.Find(bson.M{businesses_account_model.AccountName.String(): accountName}).Count()
+	count, _ := coll.Find(bson.M{businesses_account_model.Phone.String(): phone}).Count()
 	if count == 0 {
 		return false
 	}
 	return true
 }
 
-func RegisterBusinesses(session *mgo.Session, accountName, password string) error {
+func RegisterBusinesses(session *mgo.Session, phone, password string) error {
 	coll := session.DB(config.MongoDBName).C(businesses_account_model.COLL_BUSINESSES_ACCOUNT)
-	selector := bson.M{businesses_account_model.AccountName.String(): accountName}
+	selector := bson.M{businesses_account_model.Phone.String(): phone}
 	update := bson.M{"$set": bson.M{businesses_account_model.Password.String(): password}}
 	_, err := coll.Upsert(selector, update)
 	return err
 }
 
-func IsLogin(session *mgo.Session, accountName, password string) bool {
+func IsLogin(session *mgo.Session, phone, password string) bool {
 	coll := session.DB(config.MongoDBName).C(businesses_account_model.COLL_BUSINESSES_ACCOUNT)
 
-	selector := bson.M{businesses_account_model.AccountName.String(): accountName}
+	selector := bson.M{businesses_account_model.Phone.String(): phone}
 	var businessesInfo businesses_account_model.BusinessesAccount
 	coll.Find(selector).One(&businessesInfo)
 	if businessesInfo.Password != password {
@@ -38,7 +38,7 @@ func IsLogin(session *mgo.Session, accountName, password string) bool {
 
 func ComplementInfo(session *mgo.Session, businessesInfo businesses_account_model.BusinessesAccount) error {
 	coll := session.DB(config.MongoDBName).C(businesses_account_model.COLL_BUSINESSES_ACCOUNT)
-	selector := bson.M{businesses_account_model.AccountName.String(): businessesInfo.AccountName}
+	selector := bson.M{businesses_account_model.Phone.String(): businessesInfo.Phone}
 	update := bson.M{
 		"$set": bson.M{
 			businesses_account_model.NameOfShop.String(): businessesInfo.NameOfShop,

@@ -37,8 +37,8 @@ var ExRouter = router.ModuleRouter{
 
 func register(w http.ResponseWriter, r *http.Request) {
 	var requestBody struct {
-		AccountName string `json:"account_name"`
-		Password    string `json:"password"`
+		Phone    string `json:"phone"`
+		Password string `json:"password"`
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
@@ -55,13 +55,13 @@ func register(w http.ResponseWriter, r *http.Request) {
 	session := mongo.CopySession()
 	defer session.Close()
 
-	isExists := consumer_account_logic.IsExists(session, requestBody.AccountName)
+	isExists := consumer_account_logic.IsExists(session, requestBody.Phone)
 	if isExists {
 		router.JSONResp(w, http.StatusBadRequest, ec.AccountIsExists)
 		return
 	}
 
-	err = consumer_account_logic.RegisterBusinesses(session, requestBody.AccountName, requestBody.Password)
+	err = consumer_account_logic.RegisterBusinesses(session, requestBody.Phone, requestBody.Password)
 	if err != nil {
 		router.JSONResp(w, http.StatusBadRequest, ec.MongodbOp)
 		return
@@ -72,10 +72,10 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 func EditInfo(w http.ResponseWriter, r *http.Request) {
 	var requestBody struct {
-		AccountName string `json:"account_name"`
-		Location    string `json:"location"`
-		Portrait    string `json:"portrait"`
-		Nickname    string `json:"nickname"`
+		Phone    string `json:"phone"`
+		Location string `json:"location"`
+		Portrait string `json:"portrait"`
+		Nickname string `json:"nickname"`
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
@@ -93,7 +93,7 @@ func EditInfo(w http.ResponseWriter, r *http.Request) {
 	defer session.Close()
 
 	var consumerAccount consumer_account_model.ConsumerAccount
-	consumerAccount.AccountName = requestBody.AccountName
+	consumerAccount.Phone = requestBody.Phone
 	consumerAccount.Location = requestBody.Location
 	consumerAccount.Portrait = requestBody.Portrait
 	consumerAccount.Nickname = requestBody.Nickname
@@ -108,8 +108,8 @@ func EditInfo(w http.ResponseWriter, r *http.Request) {
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	var requestBody struct {
-		AccountName string `json:"account_name"`
-		Password    string `json:"password"`
+		Phone    string `json:"phone"`
+		Password string `json:"password"`
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
@@ -126,7 +126,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	session := mongo.CopySession()
 	defer session.Close()
 
-	isLogin := consumer_account_logic.IsLogin(session, requestBody.AccountName, requestBody.Password)
+	isLogin := consumer_account_logic.IsLogin(session, requestBody.Phone, requestBody.Password)
 	if !isLogin {
 		router.JSONResp(w, http.StatusBadRequest, nil)
 		return

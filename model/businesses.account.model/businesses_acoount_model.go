@@ -14,8 +14,8 @@ const (
 type BusinessesAccountKey int
 
 const (
-	Id          BusinessesAccountKey = iota
-	AccountName
+	Id         BusinessesAccountKey = iota
+	Phone
 	Password
 	NameOfShop
 	Location
@@ -26,8 +26,8 @@ func (key BusinessesAccountKey) String() string {
 	switch key {
 	case Id:
 		return "_id"
-	case AccountName:
-		return "account_name"
+	case Phone:
+		return "phone"
 	case Password:
 		return "password"
 	case NameOfShop:
@@ -42,12 +42,12 @@ func (key BusinessesAccountKey) String() string {
 }
 
 type BusinessesAccount struct {
-	Id          bson.ObjectId `bson:"_id"`
-	AccountName string        `bson:"account_name"`
-	Password    string        `bson:"password"`
-	NameOfShop  string        `bson:"name_of_shop"`
-	Location    string        `json:"location"`
-	Street      string        `bson:"street"`
+	Id         bson.ObjectId `bson:"_id"`
+	Phone      string        `bson:"phone"`
+	Password   string        `bson:"password"`
+	NameOfShop string        `bson:"name_of_shop"`
+	Location   string        `json:"location"`
+	Street     string        `bson:"street"`
 }
 
 func Index(session *mgo.Session) (*mgo.Collection, error) {
@@ -55,7 +55,7 @@ func Index(session *mgo.Session) (*mgo.Collection, error) {
 
 	indexes := []mgo.Index{
 		{
-			Key:        []string{AccountName.String()},
+			Key:        []string{Phone.String()},
 			Background: true,
 		},
 		{

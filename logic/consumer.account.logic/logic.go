@@ -7,27 +7,27 @@ import (
 	"BuffetSalesManage/BuffetSalesManage/model/consumer.account.model"
 )
 
-func IsExists(session *mgo.Session, accountName string) bool {
+func IsExists(session *mgo.Session, phone string) bool {
 	coll := session.DB(config.MongoDBName).C(consumer_account_model.COLL_CONSUMER_ACCOUNT)
-	count, _ := coll.Find(bson.M{consumer_account_model.AccountName.String(): accountName}).Count()
+	count, _ := coll.Find(bson.M{consumer_account_model.Phone.String(): phone}).Count()
 	if count != 0 {
 		return false
 	}
 	return true
 }
 
-func RegisterBusinesses(session *mgo.Session, accountName, password string) error {
+func RegisterBusinesses(session *mgo.Session, phone, password string) error {
 	coll := session.DB(config.MongoDBName).C(consumer_account_model.COLL_CONSUMER_ACCOUNT)
-	selector := bson.M{consumer_account_model.AccountName.String(): accountName}
+	selector := bson.M{consumer_account_model.Phone.String(): phone}
 	update := bson.M{"$set": bson.M{consumer_account_model.Password.String(): password}}
 	_, err := coll.Upsert(selector, update)
 	return err
 }
 
-func IsLogin(session *mgo.Session, accountName, password string) bool {
+func IsLogin(session *mgo.Session, phone, password string) bool {
 	coll := session.DB(config.MongoDBName).C(consumer_account_model.COLL_CONSUMER_ACCOUNT)
 
-	selector := bson.M{consumer_account_model.AccountName.String(): accountName}
+	selector := bson.M{consumer_account_model.Phone.String(): phone}
 	var businessesInfo consumer_account_model.ConsumerAccount
 	coll.Find(selector).One(&businessesInfo)
 	if businessesInfo.Password != password {
@@ -38,7 +38,7 @@ func IsLogin(session *mgo.Session, accountName, password string) bool {
 
 func ComplementInfo(session *mgo.Session, consumerAccount consumer_account_model.ConsumerAccount) error {
 	coll := session.DB(config.MongoDBName).C(consumer_account_model.COLL_CONSUMER_ACCOUNT)
-	selector := bson.M{consumer_account_model.AccountName.String(): consumerAccount.AccountName}
+	selector := bson.M{consumer_account_model.Phone.String(): consumerAccount.Phone}
 	update := bson.M{
 		"$set": bson.M{
 			consumer_account_model.Nickname.String(): consumerAccount.Nickname,
