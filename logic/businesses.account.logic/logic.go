@@ -5,6 +5,7 @@ import (
 	"BuffetSalesManage/BuffetSalesManage/config"
 	"BuffetSalesManage/BuffetSalesManage/model/businesses.account.model"
 	"gopkg.in/mgo.v2/bson"
+	"BuffetSalesManage/BuffetSalesManage/base/error.code"
 )
 
 func IsExists(session *mgo.Session, phone string) bool {
@@ -24,16 +25,20 @@ func RegisterBusinesses(session *mgo.Session, phone, password string) error {
 	return err
 }
 
-func IsLogin(session *mgo.Session, phone, password string) bool {
+func IsLogin(session *mgo.Session, phone, password string) string {
 	coll := session.DB(config.MongoDBName).C(businesses_account_model.COLL_BUSINESSES_ACCOUNT)
 
 	selector := bson.M{businesses_account_model.Phone.String(): phone}
+	count, _ := coll.Find(selector).Count()
+	if count == 0 {
+		return ec.ACCOUNT_IS_NOT_EXISTS
+	}
 	var businessesInfo businesses_account_model.BusinessesAccount
 	coll.Find(selector).One(&businessesInfo)
 	if businessesInfo.Password != password {
-		return false
+		return ec.INVALID_PASSWORD
 	}
-	return true
+	return ec.LOGIN_SUCCESS
 }
 
 func ComplementInfo(session *mgo.Session, businessesInfo businesses_account_model.BusinessesAccount) error {

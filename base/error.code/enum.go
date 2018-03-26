@@ -36,5 +36,14 @@ var (
 	BucketInvalid      = ErrorCode{Err: ErrorStorageCode + 4, Msg: "bucket invalid."}
 	ObjectInvalidSize  = ErrorCode{Err: ErrorStorageCode + 6, Msg: "oss object invalid size."}
 
-	AccountIsExists = ErrorCode{Err: 10001, Msg: "this account name is exists!"}
+	AccountIsExists    = ErrorCode{Err: 10001, Msg: "this account is exists!"}
+	AccountIsNotExists = ErrorCode{Err: 10002, Msg: "this account is not exists!"}
+	InvalidPassword    = ErrorCode{Err: 10003, Msg: "invalid password!"}
+)
+
+const (
+	ACCOUNT_IS_EXISTE     = "account is exists"
+	ACCOUNT_IS_NOT_EXISTS = "account is not exists"
+	INVALID_PASSWORD      = "invalid password"
+	LOGIN_SUCCESS         = "login success"
 )

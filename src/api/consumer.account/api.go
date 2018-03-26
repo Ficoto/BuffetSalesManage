@@ -126,9 +126,18 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	session := mongo.CopySession()
 	defer session.Close()
 
-	isLogin := consumer_account_logic.IsLogin(session, requestBody.Phone, requestBody.Password)
-	if !isLogin {
-		router.JSONResp(w, http.StatusBadRequest, nil)
+	isExists := consumer_account_logic.IsExists(session, requestBody.Phone)
+	if !isExists {
+		router.JSONResp(w, http.StatusBadRequest, ec.AccountIsNotExists)
+		return
+	}
+
+	loginInfo := consumer_account_logic.IsLogin(session, requestBody.Phone, requestBody.Password)
+	if loginInfo == ec.ACCOUNT_IS_NOT_EXISTS {
+		router.JSONResp(w, http.StatusBadRequest, ec.ACCOUNT_IS_NOT_EXISTS)
+		return
+	} else if loginInfo == ec.INVALID_PASSWORD {
+		router.JSONResp(w, http.StatusBadRequest, ec.InvalidPassword)
 		return
 	}
 	router.JSONResp(w, http.StatusOK, nil)
