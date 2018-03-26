@@ -44,12 +44,21 @@ func IsLogin(session *mgo.Session, phone, password string) string {
 func ComplementInfo(session *mgo.Session, businessesInfo businesses_account_model.BusinessesAccount) error {
 	coll := session.DB(config.MongoDBName).C(businesses_account_model.COLL_BUSINESSES_ACCOUNT)
 	selector := bson.M{businesses_account_model.Phone.String(): businessesInfo.Phone}
+	upset := bson.M{}
+	if len(businessesInfo.NameOfShop) != 0 {
+		upset[businesses_account_model.NameOfShop.String()] = businessesInfo.NameOfShop
+	}
+	if len(businessesInfo.Location) != 0 {
+		upset[businesses_account_model.Location.String()] = businessesInfo.Location
+	}
+	if len(businessesInfo.Street) != 0 {
+		upset[businesses_account_model.Street.String()] = businessesInfo.Street
+	}
+	if len(businessesInfo.PortraitOfShop) != 0 {
+		upset[businesses_account_model.PortraitOfShop.String()] = businessesInfo.PortraitOfShop
+	}
 	update := bson.M{
-		"$set": bson.M{
-			businesses_account_model.NameOfShop.String(): businessesInfo.NameOfShop,
-			businesses_account_model.Location.String():   businessesInfo.Location,
-			businesses_account_model.Street.String():     businessesInfo.Street,
-		},
+		"$set": upset,
 	}
 
 	err := coll.Update(selector, update)

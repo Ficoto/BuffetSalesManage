@@ -77,6 +77,7 @@ func EditStoreInfo(w http.ResponseWriter, r *http.Request) {
 		Location   string `json:"location"`
 		Street     string `json:"street"`
 		NameOfShop string `json:"name_of_shop"`
+		PortraitOfShop string `json:"portrait_of_shop"`
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
