@@ -129,7 +129,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	loginInfo := businesses_account_logic.IsLogin(session, requestBody.Phone, requestBody.Password)
 	if loginInfo == ec.ACCOUNT_IS_NOT_EXISTS {
-		router.JSONResp(w, http.StatusBadRequest, ec.ACCOUNT_IS_NOT_EXISTS)
+		router.JSONResp(w, http.StatusBadRequest, ec.AccountIsNotExists)
 		return
 	} else if loginInfo == ec.INVALID_PASSWORD {
 		router.JSONResp(w, http.StatusBadRequest, ec.InvalidPassword)
