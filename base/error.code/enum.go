@@ -36,9 +36,11 @@ var (
 	BucketInvalid      = ErrorCode{Err: ErrorStorageCode + 4, Msg: "bucket invalid."}
 	ObjectInvalidSize  = ErrorCode{Err: ErrorStorageCode + 6, Msg: "oss object invalid size."}
 
-	AccountIsExists    = ErrorCode{Err: 10001, Msg: "this account is exists!"}
-	AccountIsNotExists = ErrorCode{Err: 10002, Msg: "this account is not exists!"}
-	InvalidPassword    = ErrorCode{Err: 10003, Msg: "invalid password!"}
+	AccountIsExists      = ErrorCode{Err: 10001, Msg: "this account is exists!"}
+	AccountIsNotExists   = ErrorCode{Err: 10002, Msg: "this account is not exists!"}
+	InvalidPassword      = ErrorCode{Err: 10003, Msg: "invalid password!"}
+	IsNotEnoughCommodity = ErrorCode{Err: 10004, Msg: "is not enough commodity!"}
+	IsNotEnoughBalance   = ErrorCode{Err: 10005, Msg: "is not enough balance!"}
 )
 
 const (

@@ -9,6 +9,7 @@ import (
 	"BuffetSalesManage/BuffetSalesManage/model/mongo"
 	"BuffetSalesManage/BuffetSalesManage/model/consumer.account.model"
 	"BuffetSalesManage/BuffetSalesManage/logic/consumer.account.logic"
+	"gopkg.in/mgo.v2/bson"
 )
 
 var ExRouter = router.ModuleRouter{
@@ -32,7 +33,17 @@ var ExRouter = router.ModuleRouter{
 			Pattern:     "/login",
 			HandlerFunc: Login,
 		},
+		{
+			Name:        "RechargeBalance",
+			Methods:     []string{http.MethodPost},
+			Pattern:     "/balance/recharge",
+			HandlerFunc: RechargeBalance,
+		},
 	},
+}
+
+type registerResponse struct {
+	ConsumerId string `json:"consumer_id"`
 }
 
 func register(w http.ResponseWriter, r *http.Request) {
@@ -61,21 +72,24 @@ func register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = consumer_account_logic.RegisterBusinesses(session, requestBody.Phone, requestBody.Password)
+	consumerId, err := consumer_account_logic.RegisterBusinesses(session, requestBody.Phone, requestBody.Password)
 	if err != nil {
 		router.JSONResp(w, http.StatusBadRequest, ec.MongodbOp)
 		return
 	}
 
-	router.JSONResp(w, http.StatusOK, nil)
+	var response registerResponse
+	response.ConsumerId = consumerId.Hex()
+
+	router.JSONResp(w, http.StatusOK, response)
 }
 
 func EditInfo(w http.ResponseWriter, r *http.Request) {
 	var requestBody struct {
-		Phone    string `json:"phone"`
-		Location string `json:"location"`
-		Portrait string `json:"portrait"`
-		Nickname string `json:"nickname"`
+		ConsumerId string `json:"consumer_id"`
+		Location   string `json:"location"`
+		Portrait   string `json:"portrait"`
+		Nickname   string `json:"nickname"`
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
@@ -88,12 +102,16 @@ func EditInfo(w http.ResponseWriter, r *http.Request) {
 		router.JSONResp(w, http.StatusBadRequest, ec.InvalidArgument)
 		return
 	}
+	if !bson.IsObjectIdHex(requestBody.ConsumerId) {
+		router.JSONResp(w, http.StatusBadRequest, ec.InvalidArgument)
+		return
+	}
 
 	session := mongo.CopySession()
 	defer session.Close()
 
 	var consumerAccount consumer_account_model.ConsumerAccount
-	consumerAccount.Phone = requestBody.Phone
+	consumerAccount.Id = bson.ObjectIdHex(requestBody.ConsumerId)
 	consumerAccount.Location = requestBody.Location
 	consumerAccount.Portrait = requestBody.Portrait
 	consumerAccount.Nickname = requestBody.Nickname
@@ -126,12 +144,47 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	session := mongo.CopySession()
 	defer session.Close()
 
-	loginInfo := consumer_account_logic.IsLogin(session, requestBody.Phone, requestBody.Password)
+	consumerId, loginInfo := consumer_account_logic.IsLogin(session, requestBody.Phone, requestBody.Password)
 	if loginInfo == ec.ACCOUNT_IS_NOT_EXISTS {
 		router.JSONResp(w, http.StatusBadRequest, ec.AccountIsNotExists)
 		return
 	} else if loginInfo == ec.INVALID_PASSWORD {
 		router.JSONResp(w, http.StatusBadRequest, ec.InvalidPassword)
+		return
+	}
+	var response registerResponse
+	response.ConsumerId = consumerId.Hex()
+
+	router.JSONResp(w, http.StatusOK, response)
+}
+
+func RechargeBalance(w http.ResponseWriter, r *http.Request) {
+	var requestBody struct {
+		ConsumerId    string `json:"consumer_id"`
+		RechargeMoney int64  `json:"recharge_money"`
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		router.JSONResp(w, http.StatusBadRequest, ec.InvalidArgument)
+		return
+	}
+	err = json.Unmarshal(body, &requestBody)
+	if err != nil {
+		router.JSONResp(w, http.StatusBadRequest, ec.InvalidArgument)
+		return
+	}
+	if !bson.IsObjectIdHex(requestBody.ConsumerId) {
+		router.JSONResp(w, http.StatusBadRequest, ec.InvalidArgument)
+		return
+	}
+
+	session := mongo.CopySession()
+	defer session.Close()
+
+	err = consumer_account_logic.RechargeBalance(session, requestBody.RechargeMoney, bson.ObjectIdHex(requestBody.ConsumerId))
+	if err != nil {
+		router.JSONResp(w, http.StatusBadRequest, ec.MongodbOp)
 		return
 	}
 	router.JSONResp(w, http.StatusOK, nil)

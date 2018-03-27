@@ -17,33 +17,41 @@ func IsExists(session *mgo.Session, phone string) bool {
 	return true
 }
 
-func RegisterBusinesses(session *mgo.Session, phone, password string) error {
+func RegisterBusinesses(session *mgo.Session, phone, password string) (bson.ObjectId, error) {
 	coll := session.DB(config.MongoDBName).C(consumer_account_model.COLL_CONSUMER_ACCOUNT)
 	selector := bson.M{consumer_account_model.Phone.String(): phone}
 	update := bson.M{"$set": bson.M{consumer_account_model.Password.String(): password}}
 	_, err := coll.Upsert(selector, update)
-	return err
+	if err != nil {
+		return bson.NewObjectId(), err
+	}
+	var consumer consumer_account_model.ConsumerAccount
+	err = coll.Find(selector).One(&consumer)
+	if err != nil {
+		return bson.NewObjectId(), err
+	}
+	return consumer.Id, nil
 }
 
-func IsLogin(session *mgo.Session, phone, password string) string {
+func IsLogin(session *mgo.Session, phone, password string) (bson.ObjectId, string) {
 	coll := session.DB(config.MongoDBName).C(consumer_account_model.COLL_CONSUMER_ACCOUNT)
 
 	selector := bson.M{consumer_account_model.Phone.String(): phone}
 	var businessesInfo consumer_account_model.ConsumerAccount
 	count, _ := coll.Find(selector).Count()
 	if count == 0 {
-		return ec.ACCOUNT_IS_NOT_EXISTS
+		return bson.NewObjectId(), ec.ACCOUNT_IS_NOT_EXISTS
 	}
 	coll.Find(selector).One(&businessesInfo)
 	if businessesInfo.Password != password {
-		return ec.INVALID_PASSWORD
+		return bson.NewObjectId(), ec.INVALID_PASSWORD
 	}
-	return ec.LOGIN_SUCCESS
+	return businessesInfo.Id, ec.LOGIN_SUCCESS
 }
 
 func ComplementInfo(session *mgo.Session, consumerAccount consumer_account_model.ConsumerAccount) error {
 	coll := session.DB(config.MongoDBName).C(consumer_account_model.COLL_CONSUMER_ACCOUNT)
-	selector := bson.M{consumer_account_model.Phone.String(): consumerAccount.Phone}
+	selector := bson.M{consumer_account_model.Id.String(): consumerAccount.Id}
 	upset := bson.M{}
 	if len(consumerAccount.Nickname) != 0 {
 		upset[consumer_account_model.Nickname.String()] = consumerAccount.Nickname
@@ -60,4 +68,31 @@ func ComplementInfo(session *mgo.Session, consumerAccount consumer_account_model
 
 	err := coll.Update(selector, update)
 	return err
+}
+
+func RechargeBalance(session *mgo.Session, balance int64, consumerId bson.ObjectId) error {
+	coll := session.DB(config.MongoDBName).C(consumer_account_model.COLL_CONSUMER_ACCOUNT)
+	selector := bson.M{consumer_account_model.Id.String(): consumerId}
+	var consumer consumer_account_model.ConsumerAccount
+	err := coll.Find(selector).One(&consumer)
+	if err != nil {
+		return err
+	}
+	totalBalance := consumer.Balance + balance
+	err = coll.Update(selector, bson.M{"$set": bson.M{consumer_account_model.Balance.String(): totalBalance}})
+	return err
+}
+
+func IsEnoughBalance(session *mgo.Session, totalOrderMoney int64, consumerId bson.ObjectId) (bool, error) {
+	coll := session.DB(config.MongoDBName).C(consumer_account_model.COLL_CONSUMER_ACCOUNT)
+	selector := bson.M{consumer_account_model.Id.String(): consumerId}
+	var consumer consumer_account_model.ConsumerAccount
+	err := coll.Find(selector).One(&consumer)
+	if err != nil {
+		return false, err
+	}
+	if totalOrderMoney > consumer.Balance {
+		return false, nil
+	}
+	return true, nil
 }

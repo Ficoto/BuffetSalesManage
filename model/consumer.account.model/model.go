@@ -20,6 +20,7 @@ const (
 	Nickname
 	Location
 	Portrait
+	Balance
 )
 
 func (key ConsumerAccountKey) String() string {
@@ -36,6 +37,8 @@ func (key ConsumerAccountKey) String() string {
 		return "location"
 	case Portrait:
 		return "portrait"
+	case Balance:
+		return "balance"
 	default:
 		return ""
 	}
@@ -48,6 +51,7 @@ type ConsumerAccount struct {
 	Nickname string        `bson:"nickname"`
 	Location string        `bson:"location"`
 	Portrait string        `bson:"portrait"`
+	Balance  int64         `bson:"balance"`
 }
 
 func Index(session *mgo.Session) (*mgo.Collection, error) {

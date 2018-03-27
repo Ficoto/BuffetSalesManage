@@ -17,33 +17,41 @@ func IsExists(session *mgo.Session, phone string) bool {
 	return true
 }
 
-func RegisterBusinesses(session *mgo.Session, phone, password string) error {
+func RegisterBusinesses(session *mgo.Session, phone, password string) (bson.ObjectId, error) {
 	coll := session.DB(config.MongoDBName).C(businesses_account_model.COLL_BUSINESSES_ACCOUNT)
 	selector := bson.M{businesses_account_model.Phone.String(): phone}
 	update := bson.M{"$set": bson.M{businesses_account_model.Password.String(): password}}
 	_, err := coll.Upsert(selector, update)
-	return err
+	if err != nil {
+		return bson.NewObjectId(), err
+	}
+	var business businesses_account_model.BusinessesAccount
+	err = coll.Find(selector).One(&business)
+	if err != nil {
+		return bson.NewObjectId(), err
+	}
+	return business.Id, nil
 }
 
-func IsLogin(session *mgo.Session, phone, password string) string {
+func IsLogin(session *mgo.Session, phone, password string) (bson.ObjectId, string) {
 	coll := session.DB(config.MongoDBName).C(businesses_account_model.COLL_BUSINESSES_ACCOUNT)
 
 	selector := bson.M{businesses_account_model.Phone.String(): phone}
 	count, _ := coll.Find(selector).Count()
 	if count == 0 {
-		return ec.ACCOUNT_IS_NOT_EXISTS
+		return bson.NewObjectId(), ec.ACCOUNT_IS_NOT_EXISTS
 	}
 	var businessesInfo businesses_account_model.BusinessesAccount
 	coll.Find(selector).One(&businessesInfo)
 	if businessesInfo.Password != password {
-		return ec.INVALID_PASSWORD
+		return bson.NewObjectId(), ec.INVALID_PASSWORD
 	}
-	return ec.LOGIN_SUCCESS
+	return businessesInfo.Id, ec.LOGIN_SUCCESS
 }
 
 func ComplementInfo(session *mgo.Session, businessesInfo businesses_account_model.BusinessesAccount) error {
 	coll := session.DB(config.MongoDBName).C(businesses_account_model.COLL_BUSINESSES_ACCOUNT)
-	selector := bson.M{businesses_account_model.Phone.String(): businessesInfo.Phone}
+	selector := bson.M{businesses_account_model.Id.String(): businessesInfo.Id}
 	upset := bson.M{}
 	if len(businessesInfo.NameOfShop) != 0 {
 		upset[businesses_account_model.NameOfShop.String()] = businessesInfo.NameOfShop
@@ -63,4 +71,17 @@ func ComplementInfo(session *mgo.Session, businessesInfo businesses_account_mode
 
 	err := coll.Update(selector, update)
 	return err
+}
+
+func GetBusinessesBySelector(session *mgo.Session, selector bson.M) []businesses_account_model.BusinessesAccount {
+	coll := session.DB(config.MongoDBName).C(businesses_account_model.COLL_BUSINESSES_ACCOUNT)
+	iter := coll.Find(selector).Iter()
+	var (
+		item       businesses_account_model.BusinessesAccount
+		businesses []businesses_account_model.BusinessesAccount
+	)
+	for iter.Next(&item) {
+		businesses = append(businesses, item)
+	}
+	return businesses
 }
