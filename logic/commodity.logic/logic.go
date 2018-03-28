@@ -87,3 +87,10 @@ func GetNeedReplenishmentCommodity(session *mgo.Session, businessId bson.ObjectI
 	}
 	return needReplenishmentList
 }
+
+func GetCommodityType(session *mgo.Session, businessId bson.ObjectId) []string {
+	coll := session.DB(config.MongoDBName).C(commodity_model.COLL_COMMODITY)
+	var commodityTypeList []string
+	coll.Find(bson.M{commodity_model.BusinessId.String(): businessId}).Distinct(commodity_model.CommodityType.String(), &commodityTypeList)
+	return commodityTypeList
+}

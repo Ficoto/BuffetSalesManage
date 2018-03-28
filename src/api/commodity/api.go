@@ -35,6 +35,12 @@ var ExRouter = router.ModuleRouter{
 			Pattern:     "/list",
 			HandlerFunc: GetCommodityList,
 		},
+		{
+			Name:        "GetCommodityTypeList",
+			Methods:     []string{http.MethodGet},
+			Pattern:     "/type/list",
+			HandlerFunc: GetCommodityTypeList,
+		},
 	},
 }
 
@@ -162,5 +168,33 @@ func GetCommodityList(w http.ResponseWriter, r *http.Request) {
 		info.CommodityName = item.CommodityName
 		response.CommodityInfoes = append(response.CommodityInfoes, info)
 	}
+	router.JSONResp(w, http.StatusOK, response)
+}
+
+type CommodityTypeInfo struct {
+	CommodityTypeList []string `json:"commodity_type_list"`
+}
+
+func GetCommodityTypeList(w http.ResponseWriter, r *http.Request) {
+	var requestBody struct {
+		BusinessId string `schema:"business_id"`
+	}
+	err := utils.NewSchemaDecoder().Decode(&requestBody, r.URL.Query())
+	if err != nil {
+		log.Println(r.URL.Path, err)
+		router.JSONResp(w, http.StatusBadRequest, ec.InvalidArgument)
+		return
+	}
+	if !bson.IsObjectIdHex(requestBody.BusinessId) {
+		router.JSONResp(w, http.StatusBadRequest, ec.InvalidArgument)
+		return
+	}
+
+	session := mongo.CopySession()
+	defer session.Close()
+
+	var response CommodityTypeInfo
+	response.CommodityTypeList = commodity_logic.GetCommodityType(session, bson.ObjectIdHex(requestBody.BusinessId))
+
 	router.JSONResp(w, http.StatusOK, response)
 }
