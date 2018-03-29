@@ -12,6 +12,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"BuffetSalesManage/BuffetSalesManage/utils"
 	"log"
+	"fmt"
 )
 
 var ExRouter = router.ModuleRouter{
@@ -45,7 +46,7 @@ var ExRouter = router.ModuleRouter{
 }
 
 type registerResponse struct {
-	businessId string `json:"business_id"`
+	BusinessId string `json:"business_id"`
 }
 
 func register(w http.ResponseWriter, r *http.Request) {
@@ -82,7 +83,8 @@ func register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var response registerResponse
-	response.businessId = businessId.Hex()
+	response.BusinessId = businessId.Hex()
+	fmt.Println(response.BusinessId)
 
 	router.JSONResp(w, http.StatusOK, response)
 }
@@ -158,7 +160,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var response registerResponse
-	response.businessId = businessId.Hex()
+	response.BusinessId = businessId.Hex()
 
 	router.JSONResp(w, http.StatusOK, response)
 }
