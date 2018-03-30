@@ -185,7 +185,7 @@ type BusinessList struct {
 
 func GetBusinesses(w http.ResponseWriter, r *http.Request) {
 	var requestBody struct {
-		ConsumerIs string `json:"consumer_is"`
+		ConsumerIs string `schema:"consumer_is"`
 	}
 	err := utils.NewSchemaDecoder().Decode(&requestBody, r.URL.Query())
 	if err != nil {
@@ -230,7 +230,7 @@ type BusinessAccountInfo struct {
 
 func GetAccountInfo(w http.ResponseWriter, r *http.Request) {
 	var requestBody struct {
-		BusinessId string `json:"business_id"`
+		BusinessId string `schema:"business_id"`
 	}
 	err := utils.NewSchemaDecoder().Decode(&requestBody, r.URL.Query())
 	if err != nil {
