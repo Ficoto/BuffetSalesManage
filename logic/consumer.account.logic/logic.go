@@ -6,12 +6,14 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"BuffetSalesManage/BuffetSalesManage/model/consumer.account.model"
 	"BuffetSalesManage/BuffetSalesManage/base/error.code"
+	"fmt"
 )
 
 func IsExists(session *mgo.Session, phone string) bool {
 	coll := session.DB(config.MongoDBName).C(consumer_account_model.COLL_CONSUMER_ACCOUNT)
 	count, _ := coll.Find(bson.M{consumer_account_model.Phone.String(): phone}).Count()
-	if count != 0 {
+	fmt.Println(count)
+	if count == 0 {
 		return false
 	}
 	return true

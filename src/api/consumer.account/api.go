@@ -10,6 +10,7 @@ import (
 	"BuffetSalesManage/BuffetSalesManage/model/consumer.account.model"
 	"BuffetSalesManage/BuffetSalesManage/logic/consumer.account.logic"
 	"gopkg.in/mgo.v2/bson"
+	"fmt"
 )
 
 var ExRouter = router.ModuleRouter{
@@ -67,6 +68,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 	defer session.Close()
 
 	isExists := consumer_account_logic.IsExists(session, requestBody.Phone)
+	fmt.Println(isExists)
 	if isExists {
 		router.JSONResp(w, http.StatusBadRequest, ec.AccountIsExists)
 		return
