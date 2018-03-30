@@ -13,6 +13,7 @@ import (
 	"BuffetSalesManage/BuffetSalesManage/utils"
 	"log"
 	"fmt"
+	"BuffetSalesManage/BuffetSalesManage/logic/consumer.account.logic"
 )
 
 var ExRouter = router.ModuleRouter{
@@ -178,7 +179,7 @@ type BusinessList struct {
 
 func GetBusinesses(w http.ResponseWriter, r *http.Request) {
 	var requestBody struct {
-		Location string `schema:"location"`
+		ConsumerIs string `json:"consumer_is"`
 	}
 	err := utils.NewSchemaDecoder().Decode(&requestBody, r.URL.Query())
 	if err != nil {
@@ -186,11 +187,19 @@ func GetBusinesses(w http.ResponseWriter, r *http.Request) {
 		router.JSONResp(w, http.StatusBadRequest, ec.InvalidArgument)
 		return
 	}
+	if !bson.IsObjectIdHex(requestBody.ConsumerIs) {
+		router.JSONResp(w, http.StatusBadRequest, ec.InvalidArgument)
+		return
+	}
 
 	session := mongo.CopySession()
 	defer session.Close()
 
-	selector := bson.M{businesses_account_model.Location.String(): requestBody.Location}
+	location := consumer_account_logic.GetConsumerLocation(session, bson.ObjectIdHex(requestBody.ConsumerIs))
+	selector := bson.M{}
+	if len(location) != 0 {
+		selector[businesses_account_model.Location.String()] = location
+	}
 	businesses := businesses_account_logic.GetBusinessesBySelector(session, selector)
 
 	var response BusinessList

@@ -96,3 +96,14 @@ func IsEnoughBalance(session *mgo.Session, totalOrderMoney int64, consumerId bso
 	}
 	return true, nil
 }
+
+func GetConsumerLocation(session *mgo.Session, consumerId bson.ObjectId) string {
+	coll := session.DB(config.MongoDBName).C(consumer_account_model.COLL_CONSUMER_ACCOUNT)
+	selector := bson.M{consumer_account_model.Id.String(): consumerId}
+	var consumer consumer_account_model.ConsumerAccount
+	err := coll.Find(selector).One(&consumer)
+	if err != nil {
+		return ""
+	}
+	return consumer.Location
+}
