@@ -109,3 +109,11 @@ func GetConsumerLocation(session *mgo.Session, consumerId bson.ObjectId) string 
 	}
 	return consumer.Location
 }
+
+func GetConsumerInfo(session *mgo.Session, consumerId bson.ObjectId) (consumer_account_model.ConsumerAccount, error) {
+	coll := session.DB(config.MongoDBName).C(consumer_account_model.COLL_CONSUMER_ACCOUNT)
+	selector := bson.M{consumer_account_model.Id.String(): consumerId}
+	var consumer consumer_account_model.ConsumerAccount
+	err := coll.Find(selector).One(&consumer)
+	return consumer, err
+}

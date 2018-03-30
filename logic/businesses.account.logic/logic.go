@@ -85,3 +85,11 @@ func GetBusinessesBySelector(session *mgo.Session, selector bson.M) []businesses
 	}
 	return businesses
 }
+
+func GetBusinessInfo(session *mgo.Session, businessId bson.ObjectId) (businesses_account_model.BusinessesAccount, error) {
+	coll := session.DB(config.MongoDBName).C(businesses_account_model.COLL_BUSINESSES_ACCOUNT)
+	selector := bson.M{businesses_account_model.Id.String(): businessId}
+	var businessInfo businesses_account_model.BusinessesAccount
+	err := coll.Find(selector).One(&businessInfo)
+	return businessInfo, err
+}

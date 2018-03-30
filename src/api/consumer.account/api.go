@@ -11,6 +11,8 @@ import (
 	"BuffetSalesManage/BuffetSalesManage/logic/consumer.account.logic"
 	"gopkg.in/mgo.v2/bson"
 	"fmt"
+	"log"
+	"BuffetSalesManage/BuffetSalesManage/utils"
 )
 
 var ExRouter = router.ModuleRouter{
@@ -39,6 +41,12 @@ var ExRouter = router.ModuleRouter{
 			Methods:     []string{http.MethodPost},
 			Pattern:     "/balance/recharge",
 			HandlerFunc: RechargeBalance,
+		},
+		{
+			Name:        "GetAccountInfo",
+			Methods:     []string{http.MethodGet},
+			Pattern:     "/info",
+			HandlerFunc: GetAccountInfo,
 		},
 	},
 }
@@ -190,4 +198,43 @@ func RechargeBalance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	router.JSONResp(w, http.StatusOK, nil)
+}
+
+type ConsumerAccountInfo struct {
+	Phone    string `json:"phone"`
+	Nickname string `json:"nickname"`
+	Location string `json:"location"`
+	Balance  int64  `json:"balance"`
+}
+
+func GetAccountInfo(w http.ResponseWriter, r *http.Request) {
+	var requestBody struct {
+		ConsumerIs string `json:"consumer_is"`
+	}
+	err := utils.NewSchemaDecoder().Decode(&requestBody, r.URL.Query())
+	if err != nil {
+		log.Println(r.URL.Path, err)
+		router.JSONResp(w, http.StatusBadRequest, ec.InvalidArgument)
+		return
+	}
+	if !bson.IsObjectIdHex(requestBody.ConsumerIs) {
+		router.JSONResp(w, http.StatusBadRequest, ec.InvalidArgument)
+		return
+	}
+
+	session := mongo.CopySession()
+	defer session.Close()
+
+	consumer, err := consumer_account_logic.GetConsumerInfo(session, bson.ObjectIdHex(requestBody.ConsumerIs))
+	if err != nil {
+		router.JSONResp(w, http.StatusBadRequest, ec.MongodbOp)
+		return
+	}
+
+	var response ConsumerAccountInfo
+	response.Location = consumer.Location
+	response.Balance = consumer.Balance
+	response.Nickname = consumer.Nickname
+	response.Phone = consumer.Phone
+	router.JSONResp(w, http.StatusOK, response)
 }

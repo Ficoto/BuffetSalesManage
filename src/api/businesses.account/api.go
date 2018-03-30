@@ -43,6 +43,12 @@ var ExRouter = router.ModuleRouter{
 			Pattern:     "/list",
 			HandlerFunc: GetBusinesses,
 		},
+		{
+			Name:        "GetAccountInfo",
+			Methods:     []string{http.MethodGet},
+			Pattern:     "/info",
+			HandlerFunc: GetAccountInfo,
+		},
 	},
 }
 
@@ -212,5 +218,44 @@ func GetBusinesses(w http.ResponseWriter, r *http.Request) {
 		businessInfo.Street = item.Street
 		response.BusinessInfoList = append(response.BusinessInfoList, businessInfo)
 	}
+	router.JSONResp(w, http.StatusOK, response)
+}
+
+type BusinessAccountInfo struct {
+	Phone      string `json:"phone"`
+	NameOfShop string `json:"name_of_shop"`
+	Location   string `json:"location"`
+	Street     string `json:"street"`
+}
+
+func GetAccountInfo(w http.ResponseWriter, r *http.Request) {
+	var requestBody struct {
+		BusinessId string `json:"business_id"`
+	}
+	err := utils.NewSchemaDecoder().Decode(&requestBody, r.URL.Query())
+	if err != nil {
+		log.Println(r.URL.Path, err)
+		router.JSONResp(w, http.StatusBadRequest, ec.InvalidArgument)
+		return
+	}
+	if !bson.IsObjectIdHex(requestBody.BusinessId) {
+		router.JSONResp(w, http.StatusBadRequest, ec.InvalidArgument)
+		return
+	}
+
+	session := mongo.CopySession()
+	defer session.Close()
+
+	businessInfo, err := businesses_account_logic.GetBusinessInfo(session, bson.ObjectIdHex(requestBody.BusinessId))
+	if err != nil {
+		router.JSONResp(w, http.StatusBadRequest, ec.MongodbOp)
+		return
+	}
+
+	var response BusinessAccountInfo
+	response.Phone = businessInfo.Phone
+	response.Location = businessInfo.Location
+	response.Street = businessInfo.Street
+	response.NameOfShop = businessInfo.NameOfShop
 	router.JSONResp(w, http.StatusOK, response)
 }
