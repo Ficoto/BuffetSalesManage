@@ -185,7 +185,7 @@ type BusinessList struct {
 
 func GetBusinesses(w http.ResponseWriter, r *http.Request) {
 	var requestBody struct {
-		ConsumerIs string `schema:"consumer_is"`
+		ConsumerId string `schema:"consumer_id"`
 	}
 	err := utils.NewSchemaDecoder().Decode(&requestBody, r.URL.Query())
 	if err != nil {
@@ -193,7 +193,7 @@ func GetBusinesses(w http.ResponseWriter, r *http.Request) {
 		router.JSONResp(w, http.StatusBadRequest, ec.InvalidArgument)
 		return
 	}
-	if !bson.IsObjectIdHex(requestBody.ConsumerIs) {
+	if !bson.IsObjectIdHex(requestBody.ConsumerId) {
 		router.JSONResp(w, http.StatusBadRequest, ec.InvalidArgument)
 		return
 	}
@@ -201,7 +201,7 @@ func GetBusinesses(w http.ResponseWriter, r *http.Request) {
 	session := mongo.CopySession()
 	defer session.Close()
 
-	location := consumer_account_logic.GetConsumerLocation(session, bson.ObjectIdHex(requestBody.ConsumerIs))
+	location := consumer_account_logic.GetConsumerLocation(session, bson.ObjectIdHex(requestBody.ConsumerId))
 	selector := bson.M{}
 	if len(location) != 0 {
 		selector[businesses_account_model.Location.String()] = location
