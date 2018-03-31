@@ -209,7 +209,7 @@ type ConsumerAccountInfo struct {
 
 func GetAccountInfo(w http.ResponseWriter, r *http.Request) {
 	var requestBody struct {
-		ConsumerIs string `schema:"consumer_is"`
+		ConsumerId string `schema:"consumer_id"`
 	}
 	err := utils.NewSchemaDecoder().Decode(&requestBody, r.URL.Query())
 	if err != nil {
@@ -217,7 +217,7 @@ func GetAccountInfo(w http.ResponseWriter, r *http.Request) {
 		router.JSONResp(w, http.StatusBadRequest, ec.InvalidArgument)
 		return
 	}
-	if !bson.IsObjectIdHex(requestBody.ConsumerIs) {
+	if !bson.IsObjectIdHex(requestBody.ConsumerId) {
 		router.JSONResp(w, http.StatusBadRequest, ec.InvalidArgument)
 		return
 	}
@@ -225,7 +225,7 @@ func GetAccountInfo(w http.ResponseWriter, r *http.Request) {
 	session := mongo.CopySession()
 	defer session.Close()
 
-	consumer, err := consumer_account_logic.GetConsumerInfo(session, bson.ObjectIdHex(requestBody.ConsumerIs))
+	consumer, err := consumer_account_logic.GetConsumerInfo(session, bson.ObjectIdHex(requestBody.ConsumerId))
 	if err != nil {
 		router.JSONResp(w, http.StatusBadRequest, ec.MongodbOp)
 		return
