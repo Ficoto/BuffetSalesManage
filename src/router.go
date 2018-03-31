@@ -6,6 +6,7 @@ import (
 	"BuffetSalesManage/BuffetSalesManage/src/api/businesses.account"
 	"BuffetSalesManage/BuffetSalesManage/src/api/consumer.account"
 	"BuffetSalesManage/BuffetSalesManage/src/api/commodity"
+	"BuffetSalesManage/BuffetSalesManage/src/api/order"
 )
 
 // KangarooRouter -
@@ -15,5 +16,6 @@ var BuffetSalesRouter = router.BaseRouter{
 		businesses_account.ExRouter,
 		consumer_account.ExRouter,
 		commodity.ExRouter,
+		order.ExRouter,
 	},
 }
