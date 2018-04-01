@@ -206,6 +206,7 @@ func GetBusinesses(w http.ResponseWriter, r *http.Request) {
 	if len(location) != 0 {
 		selector[businesses_account_model.Location.String()] = location
 	}
+	selector[businesses_account_model.NameOfShop.String()] = bson.M{"$exists": true}
 	businesses := businesses_account_logic.GetBusinessesBySelector(session, selector)
 
 	var response BusinessList
@@ -218,6 +219,22 @@ func GetBusinesses(w http.ResponseWriter, r *http.Request) {
 		businessInfo.Street = item.Street
 		response.BusinessInfoList = append(response.BusinessInfoList, businessInfo)
 	}
+
+	if len(location) != 0 {
+		complementSelector := bson.M{}
+		complementSelector[businesses_account_model.Location.String()] = bson.M{"$ne": location}
+		complementSelector[businesses_account_model.NameOfShop.String()] = bson.M{"$exists": true}
+		complementBusinesses := businesses_account_logic.GetBusinessesBySelector(session, selector)
+		for _, item := range complementBusinesses {
+			businessInfo := new(BusinessInfo)
+			businessInfo.BusinessId = item.Id.Hex()
+			businessInfo.NameOfShop = item.NameOfShop
+			businessInfo.PortraitOfShop = item.PortraitOfShop
+			businessInfo.Street = item.Street
+			response.BusinessInfoList = append(response.BusinessInfoList, businessInfo)
+		}
+	}
+
 	router.JSONResp(w, http.StatusOK, response)
 }
 
