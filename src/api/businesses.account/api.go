@@ -224,7 +224,7 @@ func GetBusinesses(w http.ResponseWriter, r *http.Request) {
 		complementSelector := bson.M{}
 		complementSelector[businesses_account_model.Location.String()] = bson.M{"$ne": location}
 		complementSelector[businesses_account_model.NameOfShop.String()] = bson.M{"$exists": true}
-		complementBusinesses := businesses_account_logic.GetBusinessesBySelector(session, selector)
+		complementBusinesses := businesses_account_logic.GetBusinessesBySelector(session, complementSelector)
 		for _, item := range complementBusinesses {
 			businessInfo := new(BusinessInfo)
 			businessInfo.BusinessId = item.Id.Hex()
